@@ -17,13 +17,13 @@
     <path d="M 600 110 L 600 180" />
     
     <!-- Parallel Outputs -->
-    <path d="M 670 215 C 710 215, 710 145, 740 145" />
-    <path d="M 670 235 C 710 235, 710 305, 740 305" />
+    <path d="M 670 215 C 710 215, 710 145, 730 145 L 740 145" />
+    <path d="M 670 235 C 710 235, 710 305, 730 305 L 740 305" />
     
     <!-- WebSocket Telemetry Flow -->
     <path d="M 410 250 L 410 320" />
-    <path d="M 600 260 C 600 360, 510 360, 500 360" />
-    <path d="M 810 330 C 810 420, 415 420, 415 400" />
+    <path d="M 600 260 L 600 340 Q 600 360, 580 360 L 495 360" />
+    <path d="M 810 330 L 810 410 Q 810 430, 790 430 L 430 430 Q 410 430, 410 410 L 410 400" />
   </g>
 
   <g font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle">
@@ -62,8 +62,9 @@
     <text x="810" y="320" font-size="11" font-weight="normal" fill="#8b949e">UI Automation</text>
 
     <!-- WebSocket UI -->
-    <rect x="340" y="330" width="150" height="60" rx="8" fill="#1f2428" stroke="#a371f7" stroke-width="2" stroke-dasharray="4" />
-    <text x="415" y="355" fill="#a371f7">Electron UI</text>
-    <text x="415" y="372" font-size="11" font-weight="normal" fill="#8b949e">WebSocket Overlay</text>
+    <!-- Shifted slightly left to center STT nicely and give more space on the right for lines -->
+    <rect x="335" y="330" width="150" height="60" rx="8" fill="#1f2428" stroke="#a371f7" stroke-width="2" stroke-dasharray="4" />
+    <text x="410" y="355" fill="#a371f7">Electron UI</text>
+    <text x="410" y="372" font-size="11" font-weight="normal" fill="#8b949e">WebSocket Overlay</text>
   </g>
 </svg>
