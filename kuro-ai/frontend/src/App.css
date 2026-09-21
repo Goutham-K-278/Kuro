@@ -1,0 +1,210 @@
+/* ============================================================
+   kuro-ai/frontend/src/App.css
+   Kuro — Black Hole Dynamic Island UI (Final Form)
+   ============================================================ */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── Transparent window host ── */
+.k-host {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 14px;
+  background: transparent;
+  overflow: hidden;
+}
+
+/* ── The pill ── */
+.k-pill {
+  position: relative;
+  border-radius: 40px;
+  overflow: visible;
+  transition:
+    width  .65s cubic-bezier(.34, 1.35, .64, 1),
+    height .65s cubic-bezier(.34, 1.35, .64, 1);
+}
+
+/* Canvas container */
+.k-inner {
+  border-radius: 40px;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+}
+
+.k-inner canvas {
+  display: block;
+  border-radius: 40px;
+}
+
+/* Outer halo glow ring */
+.k-halo {
+  position: absolute;
+  inset: -2px;
+  border-radius: 42px;
+  pointer-events: none;
+  transition: box-shadow .4s ease, opacity .5s ease;
+}
+
+/* Text overlay on canvas */
+.k-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  pointer-events: none;
+}
+
+/* ── Entry / exit animations ── */
+@keyframes k-enter {
+  0%   { transform: translateY(-38px); opacity: 0; }
+  60%  { transform: translateY(3px); opacity: 1; }
+  80%  { transform: translateY(-1.5px); }
+  100% { transform: translateY(0); }
+}
+
+@keyframes k-exit {
+  0%   { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(-28px); opacity: 0; }
+}
+
+.k-entering { animation: k-enter .55s cubic-bezier(.34, 1.35, .64, 1) forwards; }
+.k-exiting  { animation: k-exit  .32s ease-in forwards; }
+
+/* ── Inner layouts ── */
+.k-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 15px;
+  width: 100%;
+}
+
+.k-stk {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex: 1;
+  min-width: 0;
+}
+
+/* ── Typography ── */
+.k-lbl {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: .04em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: text-shadow .4s ease;
+}
+
+.k-sub {
+  font-family: -apple-system, sans-serif;
+  font-size: 9px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, .7);
+  white-space: nowrap;
+  transition: text-shadow .4s ease;
+}
+
+/* ── Kuro logo ── */
+.k-logo {
+  width: 13px;
+  height: 13px;
+  position: relative;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.k-logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 0 6px rgba(191, 0, 255, .9));
+  transition: filter .4s ease;
+}
+
+.k-dot {
+  position: absolute;
+  border-radius: 50%;
+  transition: background .4s ease, box-shadow .4s ease;
+}
+
+/* ── Logo animations ── */
+@keyframes k-blink { 0%,100% { opacity: 1 } 50% { opacity: .2 } }
+@keyframes k-spin  { to { transform: rotate(360deg) } }
+@keyframes k-pulse { 0%,100% { transform: scale(1) } 50% { transform: scale(.72); opacity: .35 } }
+@keyframes k-bubble {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-1.4px) scale(1.08); }
+}
+
+.k-blink .k-logo-img { animation: k-blink 1.3s ease-in-out infinite; }
+.k-spin         { animation: k-spin  1.4s linear infinite; }
+.k-pulse        { animation: k-pulse .95s ease-in-out infinite; }
+.k-bubble .k-logo-img { animation: k-bubble .85s ease-in-out infinite, k-blink 1.25s ease-in-out infinite; }
+
+/* ── Waveform ── */
+.k-wave {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.k-bar {
+  width: 2px;
+  border-radius: 2px;
+  height: 3px;
+  transition: background .4s ease, box-shadow .4s ease;
+}
+
+@keyframes k-w1 { 0%,100% { height: 2px }  50% { height: 13px } }
+@keyframes k-w2 { 0%,100% { height: 5px }  50% { height: 2px  } }
+@keyframes k-w3 { 0%,100% { height: 9px }  50% { height: 3px  } }
+
+.k-w1 { animation: k-w1 .72s ease-in-out infinite; }
+.k-w2 { animation: k-w2 .88s ease-in-out infinite; }
+.k-w3 { animation: k-w3 .61s ease-in-out infinite; }
+
+/* ── Progress bar ── */
+.k-ptrack {
+  height: 2px;
+  background: rgba(148, 0, 211, .18);
+  border-radius: 2px;
+  margin-top: 5px;
+  overflow: hidden;
+  width: 100%;
+}
+
+.k-pfill {
+  height: 100%;
+  border-radius: 2px;
+  width: 0%;
+  transition: background .4s ease;
+}
+
+/* ── Checkmark ── */
+.k-chk {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  border: 1.5px solid currentColor;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 7px;
+  flex-shrink: 0;
+  transition: color .4s ease, box-shadow .4s ease, border-color .4s ease;
+}

@@ -1,0 +1,66 @@
+# ── Python ────────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+*.egg-info/
+dist/
+build/
+
+# ── Environment / secrets ─────────────────────────────────────────────────────
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+
+# ── PRIVATE DATA — NEVER COMMIT ───────────────────────────────────────────────
+contacts/contacts.json
+data/user_profile.json
+data/conversation_history/
+data/chroma_db/
+data/kuro_memory/
+data/kuro_cache/
+permissions/permission_log.json
+
+# ── Models & large binaries ───────────────────────────────────────────────────
+*.bin
+*.gguf
+*.onnx
+*.pt
+*.safetensors
+*.ckpt
+*.ppn
+
+# ── Logs ──────────────────────────────────────────────────────────────────────
+logs/
+*.log
+
+# ── Node ──────────────────────────────────────────────────────────────────────
+node_modules/
+kuro-ai/node_modules/
+kuro-ai/backend/node_modules/
+kuro-ai/frontend/node_modules/
+kuro-ai/desktop/node_modules/
+
+# ── OS ────────────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Generated audio / TTS cache ───────────────────────────────────────────────
+*.wav
+data/tts_cache/
+voice/train/synthetic/
+
+# ── Test cache ────────────────────────────────────────────────────────────────
+.pytest_cache/
+
+# ── Junk / generated repo files ───────────────────────────────────────────────
+structure.txt
+tmp/
+tree_output.txt
+wa_uia_tree.txt
+wa_screenshot.png
+project_code_only.txt

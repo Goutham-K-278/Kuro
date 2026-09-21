@@ -1,0 +1,733 @@
+---
+metadata:
+  title: KURO - Complete Project Architecture Reference
+  version: "1.0"
+  last_updated: "2026-05-26"
+  status: "Phase 8 - Screen Watcher + Vision Intelligence"
+
+hardware_target:
+  cpu: "Intel i5-12500H"
+  gpu: "NVIDIA RTX 4050"
+  vram: "6GB"
+  device_type: "Laptop"
+
+technology_stack:
+  language: "Python 3.11"
+  backend:
+    - "FastAPI"
+    - "uvicorn"
+  frontend:
+    - "Electron"
+    - "React"
+    - "Vite"
+  ml_frameworks:
+    - "PyTorch"
+    - "Ollama"
+    - "Groq Cloud"
+  speech:
+    - "Porcupine v4"
+    - "Whisper"
+    - "Kokoro-ONNX"
+
+project_structure:
+  root_files:
+    - name: "main.py"
+      description: "FastAPI entry point, WebSocket server, pipeline lifecycle"
+    - name: "start.ps1"
+      description: "PowerShell launcher (venv + Ollama + uvicorn)"
+    - name: "start.bat"
+      description: "Batch launcher wrapper"
+    - name: "kuro-launcher.vbs"
+      description: "Silent VBS launcher (no console window)"
+    - name: ".env"
+      description: "Central config: API keys, model paths, thresholds"
+    - name: "requirements.txt"
+      description: "Python dependencies"
+
+  directories:
+    kuro:
+      phase: "8"
+      status: "PRIMARY PIPELINE (active)"
+      subdirectories:
+        - name: "pipeline.py"
+          description: "Main command loop: Wake→STT→LLM→TTS+Action"
+        - name: "utils"
+          files:
+            - name: "llm.py"
+              description: "KuroReasoner: switchable Ollama/Groq intent parser"
+            - name: "stt.py"
+              description: "StreamingSTT: Groq Whisper API + local fallback"
+            - name: "tts.py"
+              description: "StreamingTTS: Kokoro-ONNX offline TTS"
+            - name: "audio_pipeline.py"
+              description: "Wake word (Porcupine v4) + ring buffer + VAD"
+            - name: "omniparser.py"
+              description: "OmniParser V2 client for visual grounding"
+        - name: "agents"
+          files:
+            - name: "host_agent.py"
+              description: "UFO2-style dispatcher: intent → AppAgent routing"
+            - name: "app_agents"
+              subdirs:
+                - name: "whatsapp_agent.py"
+                  description: "WhatsApp: deep-link + UIA + vision-verify send"
+                - name: "spotify_agent.py"
+                  description: "Spotify: URI search + media key + foreground"
+                - name: "type_agent.py"
+                  description: "Type-in-app: paste text into active window"
+        - name: "vision"
+          files:
+            - name: "scene_analyzer.py"
+              description: "Florence-2 screen analysis → ScreenState for LLM"
+            - name: "florence_engine.py"
+              description: "Florence-2 model wrapper (caption + OCR + grounding)"
+            - name: "screen_capture.py"
+              description: "MSS-based fast screenshot capture"
+            - name: "action_verifier.py"
+              description: "Before/after screenshot comparison"
+
+    core:
+      phase: "1-5"
+      status: "LEGACY BRAIN (still used)"
+      files:
+        - name: "config.py"
+          description: "All constants, system prompts, hardware thresholds"
+        - name: "brain.py"
+          description: "Orchestrator: intent→routing→RAG→memory→response"
+        - name: "llm_engine.py"
+          description: "Dual-brain: Ollama local + OpenRouter cloud"
+        - name: "llm_local.py"
+          description: "Ollama API wrapper (gemma4:e4b)"
+        - name: "llm_groq.py"
+          description: "Groq LPU wrapper (llama-3.1-8b / 3.3-70b)"
+        - name: "model_router.py"
+          description: "Intent-based local/cloud routing decision"
+        - name: "model_manager.py"
+          description: "VRAM-aware lazy loader with asyncio.Semaphore(1)"
+        - name: "intent_classifier.py"
+          description: "2-stage regex+keyword intent classification"
+        - name: "memory.py"
+          description: "Short-term sliding window conversation history"
+        - name: "long_term_memory.py"
+          description: "ChromaDB + Fernet encryption long-term store"
+        - name: "memory_extractor.py"
+          description: "LLM-powered fact extraction to long-term memory"
+        - name: "power_mode.py"
+          description: "Windows power scheme watcher (60s poll)"
+
+    agent:
+      phase: "1-3"
+      status: "LEGACY EXECUTORS (still used)"
+      files:
+        - name: "intent_parser.py"
+          description: "Regex fast-path (60+ patterns) + Ollama LLM fallback"
+        - name: "action_router.py"
+          description: "Routes parsed intents to executor classes"
+        - name: "executors"
+          subdirs:
+            - name: "app_launcher.py"
+              description: "Open/close apps (75+ app paths + URI schemes)"
+            - name: "messaging.py"
+              description: "WhatsApp/Telegram/Discord UIA messaging"
+            - name: "system_agent.py"
+              description: "Volume, brightness, power, typing, clipboard, WiFi"
+            - name: "media_agent.py"
+              description: "Media keys (play/pause/next) + Spotify Web API"
+            - name: "navigation_agent.py"
+              description: "In-app navigation (17 apps, keyboard shortcuts)"
+            - name: "vision_agent.py"
+              description: "LLaVA vision + UIA + Spotify API fallback"
+            - name: "screen_watcher.py"
+              description: "On-demand OCR auto-clicker (Florence-powered)"
+            - name: "blender_executor.py"
+              description: "Blender Python API automation"
+
+    voice:
+      description: "Voice I/O components"
+      files:
+        - name: "wake_word.py"
+          description: "Legacy Porcupine listener (replaced by audio_pipeline)"
+        - name: "stt.py"
+          description: "Legacy Whisper STT (replaced by kuro/utils/stt.py)"
+        - name: "stt_sherpa.py"
+          description: "Sherpa-ONNX streaming STT alternative"
+        - name: "tts.py"
+          description: "Legacy edge-tts/Kokoro TTS"
+        - name: "speaker_verify.py"
+          description: "Resemblyzer voiceprint verification (~50ms CPU)"
+        - name: "models"
+          description: ".ppn wake word model files"
+
+    data_directories:
+      - "contacts"
+      - "models"
+      - "data"
+      - "scripts"
+      - "tests"
+      - "docs"
+      - "rag"
+      - "creative"
+      - "teaching"
+      - "logs"
+      - "kuro-ai"
+
+pipeline:
+  main_flow:
+    step_1: "User speaks 'Hey Kuro'"
+    step_2: "Porcupine v4 (audio_pipeline.py) detects wake word"
+    step_3: "Ring buffer prepends 200ms pre-roll audio"
+    step_4: "StreamingSTT (stt.py) transcribes via Groq Whisper API"
+    step_4_fallback: "local faster-whisper on GPU/CPU"
+    step_5: "Speaker verification (speaker_verify.py) — optional"
+    step_6: "KuroReasoner (llm.py) parses intent"
+    step_6_stages:
+      - name: "Stage 1"
+        description: "Regex fast-path (30+ patterns, 0ms)"
+      - name: "Stage 2"
+        description: "OllamaReasoner (gemma4:e4b, ~1-3s)"
+      - name: "Stage 3"
+        description: "GroqReasoner fallback (llama-3.1-8b, ~300ms)"
+    step_7: "Vision context injected from SceneAnalyzer (Florence-2)"
+    step_8: "HostAgent (host_agent.py) dispatches to AppAgent"
+    step_8_routes:
+      - "WhatsAppAgent → deep-link or UIA search+send"
+      - "SpotifyAgent → URI search + media keys"
+      - "SystemAgent → volume, screenshot, browser tabs"
+      - "ScreenWatcher → persistent OCR auto-clicker"
+    step_9: "TTS speaks acknowledgment IN PARALLEL with action"
+    step_10: "OmniParser verifies action result (background)"
+    step_11: "WebSocket pushes status to Electron UI"
+
+llm_connections:
+  connections:
+    - component: "kuro/utils/llm.py — KuroReasoner"
+      llm: "Ollama gemma4:e4b"
+      level: "primary"
+      purpose: "Intent parsing from voice"
+      connection: "POST http://localhost:11434/api/chat"
+    
+    - component: "kuro/utils/llm.py — KuroReasoner"
+      llm: "Groq llama-3.1-8b-instant"
+      level: "fallback"
+      purpose: "Intent parsing when Ollama fails"
+      connection: "Groq SDK chat.completions.create()"
+    
+    - component: "kuro/utils/stt.py — StreamingSTT"
+      llm: "Groq whisper-large-v3-turbo"
+      level: "primary"
+      purpose: "Speech-to-text"
+      connection: "POST https://api.groq.com/openai/v1/audio/transcriptions"
+    
+    - component: "kuro/utils/stt.py — StreamingSTT"
+      llm: "Local faster-whisper"
+      level: "fallback"
+      purpose: "STT when Groq offline"
+      connection: "model_manager.get_sync(whisper)"
+    
+    - component: "core/llm_engine.py — LLMEngine"
+      llm: "Ollama gemma4:e4b"
+      level: "local"
+      purpose: "Legacy brain conversations"
+      connection: "POST http://localhost:11434/api/chat"
+    
+    - component: "core/llm_engine.py — LLMEngine"
+      llm: "OpenRouter"
+      level: "cloud"
+      purpose: "Complex coding/teaching tasks"
+      connection: "POST https://openrouter.ai/api/v1/chat/completions"
+    
+    - component: "core/llm_groq.py — GroqLLM"
+      llm: "Groq llama-3.3-70b / 3.1-8b"
+      level: "cloud"
+      purpose: "Cloud inference for brain.py"
+      connection: "Groq SDK"
+    
+    - component: "kuro/vision/florence_engine.py"
+      llm: "Florence-2"
+      level: "local"
+      purpose: "OCR + captioning + grounding"
+      connection: "Runs on GPU via transformers"
+
+llm_backend_switching:
+  env_variable: "LLM_BACKEND"
+  options:
+    local:
+      primary: "OllamaReasoner"
+      fallback: "GroqReasoner"
+    groq:
+      primary: "GroqReasoner"
+      fallback: "OllamaReasoner"
+    auto:
+      description: "Try Ollama first, fallback to Groq on error"
+
+model_router_logic:
+  always_local:
+    - "system_command"
+    - "file_operation"
+    - "app_control"
+    - "settings"
+  always_cloud:
+    - "teach_dsa"
+    - "code_review"
+    - "blender_create"
+    - "blender_modify"
+  complexity_check:
+    intent_types:
+      - "general_chat"
+      - "code_help"
+    method: "keyword density scoring"
+  vram_guard:
+    rule: "if VRAM < floor, force cloud even for local intents"
+
+key_components:
+  wake_word_audio:
+    file: "kuro/utils/audio_pipeline.py"
+    model: "Porcupine v4"
+    keyword: "Hey Kuro"
+    model_type: ".ppn model"
+    features:
+      - name: "Ring buffer"
+        value: "3-second circular for pre-wake audio capture"
+      - name: "Adaptive VAD"
+        value: "auto-calibrates ambient noise (P90 percentile)"
+      - name: "Direct-arm mode"
+        value: "after greeting, listens without re-requiring wake word"
+      - name: "Echo blanking"
+        value: "0.8s mic ignore after TTS playback"
+
+  stt_pipeline:
+    file: "kuro/utils/stt.py"
+    primary:
+      name: "Groq Whisper API"
+      latency: "200-400ms"
+    fallback:
+      name: "local faster-whisper"
+      precision: "GPU int8_float16, CPU int8"
+    features:
+      - "Contact name injection into Whisper prompt"
+      - "Hallucination filter: strips thank you, bye, artifacts"
+      - "Post-processing: dedup, correct app names, fix Tamil accent"
+
+  tts_pipeline:
+    file: "kuro/utils/tts.py"
+    model: "Kokoro-ONNX"
+    offline: true
+    first_word_latency: "~100ms"
+    voice:
+      name: "af_nova"
+      gender: "female"
+      speed: "1.1x"
+      sample_rate: "24kHz"
+    features:
+      - "Pre-warmed greetings cached as .npy files (>50ms playback)"
+      - "Sentence-streaming: splits at .!? boundaries"
+      - "Parallel synthesis"
+      - "Echo shield: sets _TTS_PLAYING flag for STT filtering"
+
+  model_manager:
+    file: "core/model_manager.py"
+    concurrency_control: "asyncio.Semaphore(1)"
+    features:
+      - "VRAM floor monitoring before loading (prevents OOM)"
+      - "Lazy loading: models only loaded on first use"
+    registered_models:
+      - "whisper"
+      - "kokoro"
+      - "florence-2"
+
+  memory_system:
+    short_term:
+      file: "core/memory.py"
+      type: "sliding window"
+      storage: "last N messages in RAM"
+    long_term:
+      file: "core/long_term_memory.py"
+      backend: "ChromaDB"
+      encryption: "Fernet encryption"
+      storage: "vector store"
+    extraction:
+      file: "core/memory_extractor.py"
+      method: "LLM-powered fact extraction"
+      destination: "long-term store"
+
+  privacy_security:
+    security_level: "high"
+    privacy_guard: true
+    features:
+      - name: "Remote desktop block"
+        enabled: "SECURITY_LEVEL=high"
+      - name: "Cloud upload block"
+        enabled: "PRIVACY_GUARD_ENABLED=true"
+      - name: "Speaker verification"
+        method: "Resemblyzer cosine similarity"
+        threshold: "0.72"
+      - name: "Memory encryption"
+        type: "Fernet encryption"
+        optional: true
+
+  power_mode_watcher:
+    file: "core/power_mode.py"
+    poll_interval: "60s"
+    polling_method: "Windows power scheme check"
+    features:
+      - "Hot-swap inference params on mode change"
+      - "Adjust Whisper threads"
+      - "VRAM thresholds"
+      - "VAD sensitivity"
+    modes:
+      - "Balanced"
+      - "High Performance"
+      - "Power Saver"
+
+environment_variables:
+  llm_backend:
+    name: "LLM_BACKEND"
+    default: "local"
+    options: ["local", "groq", "auto"]
+    purpose: "LLM backend selection"
+
+  local_model:
+    name: "LOCAL_MODEL"
+    default: "gemma4:e4b"
+    purpose: "Ollama model name"
+
+  ollama_url:
+    name: "OLLAMA_BASE_URL"
+    default: "http://localhost:11434"
+    purpose: "Ollama server address"
+
+  groq_api_key:
+    name: "GROQ_API_KEY"
+    required: true
+    purpose: "Groq cloud API key"
+
+  porcupine_key:
+    name: "PICOVOICE_KEY"
+    required: true
+    purpose: "Porcupine wake word key"
+
+  porcupine_model_path:
+    name: "PORCUPINE_KEYWORD_PATH"
+    default: "auto-detect"
+    purpose: "Path to .ppn file"
+
+  stt_backend:
+    name: "STT_BACKEND"
+    default: "groq"
+    options: ["groq", "local"]
+    purpose: "Speech-to-text backend"
+
+  whisper_model:
+    name: "WHISPER_MODEL"
+    default: "large-v3-turbo"
+    purpose: "Local Whisper model"
+
+  stt_device:
+    name: "STT_DEVICE"
+    default: "cuda"
+    options: ["cuda", "cpu"]
+    purpose: "STT computation device"
+
+  speaker_verify:
+    name: "SPEAKER_VERIFY"
+    default: "false"
+    type: "boolean"
+    purpose: "Enable voice verification"
+
+  speaker_verify_threshold:
+    name: "SPEAKER_VERIFY_THRESHOLD"
+    default: "0.72"
+    type: "float"
+    purpose: "Cosine similarity cutoff"
+
+  vision_enabled:
+    name: "VISION_ENABLED"
+    default: "true"
+    type: "boolean"
+    purpose: "Enable screen analysis"
+
+  security_level:
+    name: "SECURITY_LEVEL"
+    default: "high"
+    options: ["low", "medium", "high"]
+    purpose: "Privacy guard level"
+
+  cloud_api_key:
+    name: "CLOUD_API_KEY"
+    required: false
+    purpose: "OpenRouter API key"
+
+  cloud_model:
+    name: "CLOUD_MODEL"
+    required: false
+    purpose: "OpenRouter model name"
+
+  vad_silence_threshold:
+    name: "VAD_SILENCE_THRESHOLD_MS"
+    default: "700"
+    type: "integer"
+    unit: "milliseconds"
+    purpose: "Silence duration to end utterance"
+
+  ring_buffer_seconds:
+    name: "RING_BUFFER_SECONDS"
+    default: "3"
+    type: "integer"
+    unit: "seconds"
+    purpose: "Pre-wake audio buffer duration"
+
+issues_and_bugs:
+  critical:
+    - id: 1
+      location: "agent/intent_parser.py:2"
+      issue: "import ollama at module level — crashes if ollama package not installed"
+      impact: "App won't start if legacy agent is imported"
+      severity: "CRITICAL"
+
+    - id: 2
+      location: "agent/executors/system_agent.py:3"
+      issue: "import pyautogui at module level — crashes on headless/no-display"
+      impact: "SystemAgent import fails without display"
+      severity: "CRITICAL"
+
+    - id: 3
+      location: "agent/executors/app_launcher.py:3"
+      issue: "import pygetwindow as gw at module level"
+      impact: "Crash if pygetwindow not installed"
+      severity: "CRITICAL"
+
+    - id: 4
+      location: "agent/executors/navigation_agent.py:28-30"
+      issue: "import pyautogui, pyperclip, pygetwindow at module level"
+      impact: "Hard crash if any missing"
+      severity: "CRITICAL"
+
+    - id: 5
+      location: "kuro/utils/tts.py:68-72"
+      issue: "FileNotFoundError if Kokoro model files missing"
+      impact: "TTS completely unavailable"
+      severity: "CRITICAL"
+
+    - id: 6
+      location: "kuro/utils/stt.py:227-229"
+      issue: "GROQ_API_KEY empty → ValueError raised inside async flow"
+      impact: "STT fails silently, returns empty string"
+      severity: "CRITICAL"
+
+    - id: 7
+      location: "core/llm_engine.py:44"
+      issue: "requests.get() sync call in async context"
+      impact: "Blocks event loop for 3s on timeout"
+      severity: "CRITICAL"
+
+  high_priority:
+    - id: 8
+      location: "kuro/utils/llm.py:173-188"
+      issue: "^play\\s+(.+)$ regex catches everything starting with play"
+      impact: "play a game routes to Spotify instead of general_response"
+      severity: "HIGH"
+
+    - id: 9
+      location: "agent/intent_parser.py:511-529"
+      issue: "_VISION_SEND_MSG pattern redefined, overrides earlier definition"
+      impact: "Earlier pattern is dead code"
+      severity: "HIGH"
+
+    - id: 11
+      location: "kuro/utils/stt.py:357-360"
+      issue: "synchronous sleep inside async function"
+      impact: "Blocks entire event loop for 150ms"
+      severity: "HIGH"
+
+    - id: 12
+      location: "kuro/agents/app_agents/whatsapp_agent.py:101-117"
+      issue: "Sends BOTH Enter AND Ctrl+Enter"
+      impact: "Message may be sent twice"
+      severity: "HIGH"
+
+dependencies:
+  core:
+    - name: "fastapi"
+      purpose: "HTTP/WS server"
+      required: true
+    - name: "uvicorn"
+      purpose: "ASGI server"
+      required: true
+    - name: "pvporcupine"
+      purpose: "Wake word detection"
+      required: true
+    - name: "pvrecorder"
+      purpose: "Audio recording"
+      required: true
+    - name: "faster-whisper"
+      purpose: "Local STT fallback"
+      required: true
+    - name: "kokoro-onnx"
+      purpose: "Offline TTS"
+      required: true
+    - name: "groq"
+      purpose: "Groq cloud SDK"
+      required: true
+    - name: "httpx"
+      purpose: "Async HTTP client"
+      required: true
+
+  ui_automation:
+    - name: "pywinauto"
+      purpose: "Windows UI automation"
+      required: true
+      use_case: "WhatsApp"
+    - name: "pyautogui"
+      purpose: "Mouse/keyboard control"
+      required: true
+      use_case: "desktop automation"
+    - name: "pygetwindow"
+      purpose: "Window management"
+      required: true
+    - name: "pyperclip"
+      purpose: "Clipboard operations"
+      required: true
+    - name: "pycaw"
+      purpose: "Windows audio control"
+      required: true
+      use_case: "volume control"
+
+  system:
+    - name: "psutil"
+      purpose: "Process management"
+      required: true
+    - name: "win32gui"
+      purpose: "Windows native APIs"
+      required: true
+    - name: "win32api"
+      purpose: "Windows API access"
+      required: true
+
+  ml:
+    - name: "transformers"
+      purpose: "Florence-2 vision"
+      required: false
+    - name: "torch"
+      purpose: "PyTorch ML framework"
+      required: false
+    - name: "mss"
+      purpose: "Fast screenshot capture"
+      required: true
+    - name: "chromadb"
+      purpose: "Long-term memory vector DB"
+      required: false
+
+  services:
+    - name: "spotipy"
+      purpose: "Spotify Web API"
+      required: false
+    - name: "resemblyzer"
+      purpose: "Speaker verification"
+      required: false
+    - name: "ollama"
+      purpose: "Ollama Python SDK"
+      required: false
+      note: "Legacy"
+
+startup_sequence:
+  step_1:
+    command: "start.ps1"
+    actions:
+      - "Activates .venv"
+      - "Starts Ollama serve (background)"
+      - "Waits for Ollama health check"
+      - "Pulls gemma4:e4b if missing"
+      - "Launches: uvicorn main:app --port 8000"
+
+  step_2:
+    file: "main.py"
+    context: "FastAPI lifespan"
+    actions:
+      - "Sets process priority HIGH + CPU affinity"
+      - "Creates KuroPipeline(ws_callback=broadcast)"
+
+  step_3:
+    file: "kuro/pipeline.py"
+    function: "pipeline.start()"
+    sequence:
+      1: "Init StreamingSTT, KuroReasoner, StreamingTTS, HostAgent, WakeWordListener"
+      2: "TTS prewarm (pre-render 8 greetings → RAM)"
+      3: "Whisper model prewarm via model_manager"
+      4: "WakeWordListener.start() → background mic capture thread"
+      5: "Auto-calibrate ambient noise (1s)"
+      6: "Enter main _command_cycle() loop"
+
+file_reference:
+  main_py:
+    name: "main.py"
+    type: "Entry Point"
+    components:
+      - type: "FastAPI app"
+        websocket: "/ws"
+      - type: "Pipeline Manager"
+        manages: "KuroPipeline lifecycle (start/stop)"
+      - type: "CPU Affinity"
+        cores: "P-cores (6-11)"
+        purpose: "minimum latency"
+      - type: "Model Prewarming"
+        when: "during startup lifespan"
+
+  pipeline_py:
+    name: "kuro/pipeline.py"
+    type: "Command Cycle"
+    features:
+      - stage: "1"
+        name: "Wait for wake word"
+      - stage: "2"
+        name: "Listen for command"
+      - parallel_execution: "TTS acknowledgment + action run simultaneously"
+      - confirmation_flow: "for ambiguous WhatsApp contacts"
+      - vision_injection: "context injected before LLM intent parsing"
+      - verification: "post-action verification via OmniParser (background)"
+
+  llm_py:
+    name: "kuro/utils/llm.py"
+    type: "Intent Parser"
+    strategy:
+      fast_path:
+        patterns: "30+ regex patterns skip LLM entirely"
+        optimization: "saves 300-600ms"
+      llm_fallback:
+        model: "Ollama/Groq"
+        use_case: "complex intents"
+      specializations:
+        whatsapp:
+          feature: "preserves long paragraph messages"
+        contact_correction:
+          method: "fuzzy matching against contacts.json"
+          threshold: "0.50"
+      preprocessing:
+        transcript_dedup: "strips Whisper's repeated sentences"
+        speak_phrase_generation: "without extra LLM call"
+
+  host_agent_py:
+    name: "kuro/agents/host_agent.py"
+    type: "Action Dispatcher"
+    routing:
+      tool_types: "18 tool types"
+      routing_method: "intent-based dispatch"
+    features:
+      - privacy_guard: "blocks remote desktop/cloud upload"
+      - multi_action: "sequential execution with rollback on failure"
+      - verification: "background OmniParser verification (fire-and-forget)"
+
+  brain_py:
+    name: "core/brain.py"
+    type: "Legacy Orchestrator"
+    pipeline:
+      - step: "intent classification"
+      - step: "model routing"
+      - step: "RAG integration"
+      - step: "memory management"
+      - step: "response generation"
+    features:
+      - long_term_memory_injection: "context injected into LLM prompts"
+      - personality_system: "configurable tone"
+    note: "Used by legacy agent/ system, NOT by kuro/pipeline.py"
+
+---

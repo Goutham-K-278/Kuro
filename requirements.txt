@@ -1,0 +1,105 @@
+# ============================================================
+# KURO - Requirements
+# Install: pip install -r requirements.txt
+# ============================================================
+
+# --- LLM / AI Core ---
+ollama                          # Local LLM runner (gemma4:e2b)
+openai                          # OpenAI-compatible client for OpenRouter API
+httpx                           # Async HTTP for API calls
+requests                        # Sync HTTP for simple calls
+diskcache                       # Response caching (disk)
+
+# --- Speech To Text ---
+faster-whisper                  # Distil-Whisper: GPU-accelerated, 50% lighter than Whisper
+noisereduce                     # Optional noise reduction before Whisper (helps noisy mic)
+
+# Windows CUDA runtime DLLs (fixes missing cublas64_12.dll when using faster-whisper on GPU)
+nvidia-cublas-cu12
+nvidia-cuda-runtime-cu12
+
+# --- Text To Speech ---
+piper-tts                       # CPU-based TTS, 0 VRAM
+edge-tts                        # Cloud TTS fallback (Microsoft Edge)
+pyttsx3                         # Offline TTS fallback (used when edge-tts fails/no internet)
+kokoro-onnx                     # Ultra-fast local TTS (~100ms per sentence, Kokoro-82M)
+
+# --- Vision Agent ---
+mss                             # Fast screenshot capture (faster than pyautogui)
+uiautomation                    # Windows accessibility tree for instant UI interaction
+pillow                          # Image processing (PIL) — used by mss and VisionAgent
+spotipy                         # Spotify Web API for reliable music control
+
+
+# --- Wake Word ---
+openwakeword
+sounddevice
+onnxruntime
+soundfile                       # Audio file handling
+numpy                           # Audio processing
+librosa                         # Emotion detection features (pitch/tempo/mfcc)
+scipy                            # librosa dependency + DSP
+
+# --- RAG / Vector DB ---
+chromadb                        # Local vector database
+sentence-transformers           # Fallback embedder (if nomic not available yet)
+
+# --- UI ---
+# NOTE: UI is handled by Electron app in kuro-ai/
+# Python runs as a background API server, not a web UI
+fastapi                         # Brain API server (Node.js backend calls this)
+uvicorn                         # ASGI server to run FastAPI
+rich                            # Terminal formatting for --mode terminal
+
+# --- System Control ---
+psutil                          # Process, CPU, RAM, disk monitoring
+pygetwindow                     # Window management
+pyautogui                       # Keyboard/mouse automation
+pillow                          # Screenshots (PIL.ImageGrab)
+pyperclip                       # Clipboard access
+
+# ── Kuro Upgrade 1 ────────────────────────────────────────────────────────────
+pywinauto                       # UIA backend for WhatsApp message automation
+spotapi                         # Free Spotify web-player emulation (no official API key)
+groq                            # Groq SDK (llama-3.1-8b-instant tool-calling)
+sherpa-onnx                     # Streaming Zipformer ASR (~50ms partial transcripts)
+huggingface_hub                 # Used by setup_models.py to download OmniParser weights
+pycaw                           # Windows audio control (volume, mute, etc)
+screen-brightness-control       # Screen brightness control (Windows)
+
+# --- Vision / OCR ---
+pytesseract                     # Tesseract OCR wrapper (fallback to Windows native OCR)
+mss                             # Ultra-fast screenshot capture (2-5ms vs 100ms+ pyautogui)
+uiautomation                    # Windows UI Automation accessibility tree (button/input finding)
+transformers>=4.46,<5           # Florence-2 model loading (v5 currently breaks Florence remote code)
+torch>=2.1.0                    # PyTorch runtime
+torchvision                     # Image transforms
+bitsandbytes                    # INT8 quantization for Florence-2
+accelerate                      # Device placement and load acceleration
+timm                            # Florence-2 vision backbone dependency
+einops                          # Florence-2 tensor rearrangement dependency
+
+# --- Spotify API ---
+spotipy                         # Spotify Web API client (search + playback control)
+
+# --- Security / Memory encryption ---
+cryptography                    # Fernet encryption for memory-at-rest
+resemblyzer                     # Speaker verification embedding model
+turboquant                      # Best-effort Python-side TurboQuant support
+
+# --- Utilities ---
+python-dotenv                   # Load .env file
+pydantic                        # Data validation
+pathlib                         # Path management (stdlib, listed for clarity)
+aiohttp                         # Async HTTP — used by model_router Groq ping
+
+# ── Phase 5 Additions ─────────────────────────────────────────────────────────
+deepfilternet                   # DeepFilterNet3 — classroom noise suppression (~8ms)
+# Local LLM — uses Ollama (already installed), no llama-cpp-python needed.
+#   1. Start daemon:  ollama serve
+#   2. Pull model:    ollama pull gemma4:e2b
+comtypes                        # Required by pywinauto UIA backend on Windows
+
+# --- Optional / Dev Tools ---
+pytest                          # Testing
+colorama                        # Colored terminal output (Windows)

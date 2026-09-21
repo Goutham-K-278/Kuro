@@ -1,0 +1,77 @@
+﻿<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><title>Kuro Wake</title></head>
+<body>
+<script>
+  // Wake word detector — 1x1 off-screen window, runs Speech API continuously
+  // Phonetic variants included because ASR mishears "Kuro" often
+  const TRIGGERS = [
+    'hey kuro', 'kuro', 'ok kuro', 'yo kuro', 'hi kuro',
+    'wake up kuro', 'hello kuro', 'hey crew', 'hey curo',
+    'hey cure', 'hey cure-o', 'hey curo', 'cure row',
+    'kuro wake up', 'activate kuro',
+  ];
+
+  let isRunning = false;
+
+  function log(msg) { console.log('[Wake] ' + msg); }
+
+  function startListening() {
+    if (isRunning) return;
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) { log('ERROR: SpeechRecognition not available'); return; }
+
+    isRunning = true;
+    const rec = new SR();
+    rec.continuous = true;
+    rec.interimResults = true;
+    rec.lang = 'en-US';
+    rec.maxAlternatives = 5;
+
+    rec.onstart = () => log('Microphone active — listening for "Hey Kuro"...');
+
+    rec.onresult = (event) => {
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        for (let j = 0; j < event.results[i].length; j++) {
+          const heard = event.results[i][j].transcript.toLowerCase().trim();
+          if (!heard) continue;
+          log('Heard: "' + heard + '"');
+          if (TRIGGERS.some(t => heard.includes(t))) {
+            log('TRIGGER! Summoning Kuro...');
+            try { window.wakeIPC.wakeDetected(); } catch(e) { log('IPC err: ' + e); }
+            return;
+          }
+        }
+      }
+    };
+
+    rec.onerror = (e) => {
+      isRunning = false;
+      log('Error: ' + e.error);
+      const delay = e.error === 'not-allowed' ? 5000 : e.error === 'no-speech' ? 200 : 800;
+      setTimeout(startListening, delay);
+    };
+
+    rec.onend = () => {
+      isRunning = false;
+      setTimeout(startListening, 300);
+    };
+
+    try { rec.start(); }
+    catch(e) { isRunning = false; setTimeout(startListening, 1000); }
+  }
+
+  // Request mic permission explicitly, then start
+  navigator.mediaDevices.getUserMedia({ audio: true })
+    .then(stream => {
+      log('Mic granted — starting wake word detection');
+      stream.getTracks().forEach(t => t.stop());
+      startListening();
+    })
+    .catch(err => {
+      log('Mic denied: ' + err.message + ' — trying anyway in 2s');
+      setTimeout(startListening, 2000);
+    });
+</script>
+</body>
+</html>

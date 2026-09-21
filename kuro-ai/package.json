@@ -1,0 +1,19 @@
+{
+    "name": "kuro-ai",
+    "version": "1.0.0",
+    "description": "Kuro - Your Personal AI Assistant",
+    "private": true,
+    "scripts": {
+        "dev:all": "concurrently --names \"FRONTEND,ELECTRON\" --prefix-colors \"green.bold,magenta.bold\" \"npm run dev:frontend\" \"cd desktop && npm start\"",
+        "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+        "dev:backend": "cd backend && npm run dev",
+        "dev:frontend": "cd frontend && npm run dev",
+        "dev:brain": "cd .. && .\\.venv\\Scripts\\python main.py",
+        "dev:desktop": "concurrently \"npm run dev:frontend\" \"cd desktop && npm start\"",
+        "install:all": "cd backend && npm install && cd ../frontend && npm install && cd ../desktop && npm install",
+        "build:frontend": "cd frontend && npm run build"
+    },
+    "devDependencies": {
+        "concurrently": "^9.0.0"
+    }
+}

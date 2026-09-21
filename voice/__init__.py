@@ -1,0 +1,3 @@
+"""
+KURO - Voice Module
+"""

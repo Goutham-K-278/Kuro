@@ -1,0 +1,31 @@
+{
+    "name": "Kuro",
+    "version": "1.0.0",
+    "description": "Kuro AI Assistant - Desktop App",
+    "main": "main.js",
+    "scripts": {
+        "start": "electron .",
+        "build": "electron-builder"
+    },
+    "build": {
+        "appId": "com.kuro.assistant",
+        "productName": "Kuro",
+        "win": {
+            "target": "nsis",
+            "icon": "../frontend/public/Kuro-icon.png"
+        },
+        "nsis": {
+            "oneClick": true,
+            "createDesktopShortcut": true,
+            "createStartMenuShortcut": true,
+            "shortcutName": "Kuro AI"
+        }
+    },
+    "dependencies": {
+        "electron": "^33.0.0",
+        "ws": "^8.19.0"
+    },
+    "devDependencies": {
+        "electron-builder": "^25.0.0"
+    }
+}

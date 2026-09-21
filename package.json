@@ -1,0 +1,10 @@
+﻿{
+    "name": "kuro-llm",
+    "version": "1.0.0",
+    "description": "Kuro AI Assistant - local JARVIS",
+    "private": true,
+    "scripts": {
+        "start": "powershell -ExecutionPolicy Bypass -File scripts/dev.ps1"
+    }
+}
+

@@ -1,0 +1,15 @@
+/* ============================================================
+   kuro-ai/frontend/src/index.css
+   Make body fully transparent for Electron window
+   ============================================================ */
+
+html, body, #root {
+  background: transparent !important;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  width: 100vw;
+  height: 100vh;
+  -webkit-user-select: none;
+  user-select: none;
+}

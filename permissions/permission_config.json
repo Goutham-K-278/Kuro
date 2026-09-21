@@ -1,0 +1,14 @@
+{
+  "delete": {
+    "system": "BLOCKED",
+    "permanent": "ALWAYS_ASK",
+    "recycle": "ASK_ONCE"
+  },
+  "send": {
+    "known_contact": "SILENT",
+    "unknown_contact": "ALWAYS_ASK"
+  },
+  "shutdown": {
+    "any": "ALWAYS_ASK"
+  }
+}
