@@ -1,3 +1,0 @@
-"""
-KURO - Creative Module (Blender)
-"""

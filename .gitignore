@@ -8,21 +8,40 @@ venv/
 dist/
 build/
 
-# ── Environment / secrets ─────────────────────────────────────────────────────
+# ── Environment / Secrets — NEVER COMMIT ──────────────────────────────────────
 .env
 .env.*
 !.env.example
 *.key
 *.pem
+*.ppn
+
+# ── Encryption keys & runtime secrets ─────────────────────────────────────────
+data/.kuro_key
+data/kuro_key
+*.kuro_key
 
 # ── PRIVATE DATA — NEVER COMMIT ───────────────────────────────────────────────
-contacts/contacts.json
+# Full contacts directory (real phone numbers)
+contacts/
+
+# User-specific runtime data
 data/user_profile.json
 data/conversation_history/
 data/chroma_db/
 data/kuro_memory/
 data/kuro_cache/
+data/tts_cache/
+data/blender_watch/
+
+# Permission runtime logs
 permissions/permission_log.json
+
+# ── Internal planning / personal docs — keep private ──────────────────────────
+docs/Kuro_Phase8_Plan.md
+docs/about.md
+KURO.md
+SKILL.md
 
 # ── Models & large binaries ───────────────────────────────────────────────────
 *.bin
@@ -32,6 +51,14 @@ permissions/permission_log.json
 *.safetensors
 *.ckpt
 *.ppn
+*.nemo
+voice/models/*.onnx
+voice/models/*.bin
+voice/models/*.ppn
+
+# Trained voice models (personal biometric data)
+voice/models/kuro_verifier.joblib
+voice/models/*.joblib
 
 # ── Logs ──────────────────────────────────────────────────────────────────────
 logs/
@@ -44,6 +71,12 @@ kuro-ai/backend/node_modules/
 kuro-ai/frontend/node_modules/
 kuro-ai/desktop/node_modules/
 
+# ── Electron cache (generated at runtime) ─────────────────────────────────────
+electron-cache/
+**/electron-cache/
+.cache/
+**/.cache/
+
 # ── OS ────────────────────────────────────────────────────────────────────────
 .DS_Store
 Thumbs.db
@@ -54,13 +87,21 @@ desktop.ini
 data/tts_cache/
 voice/train/synthetic/
 
-# ── Test cache ────────────────────────────────────────────────────────────────
+# ── Test / debug artifacts ────────────────────────────────────────────────────
 .pytest_cache/
+wa_uia_tree.txt
+wa_screenshot.png
+*.png
+*.jpeg
+*.jpg
 
 # ── Junk / generated repo files ───────────────────────────────────────────────
 structure.txt
 tmp/
 tree_output.txt
-wa_uia_tree.txt
-wa_screenshot.png
 project_code_only.txt
+task\ completed.md
+
+# ── Placement proof folder (personal documents) ───────────────────────────────
+Placement*/
+Test/

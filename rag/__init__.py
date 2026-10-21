@@ -1,3 +1,0 @@
-"""
-KURO - RAG Module
-"""

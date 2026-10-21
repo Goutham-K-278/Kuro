@@ -1,3 +1,0 @@
-"""
-KURO - Teaching Module
-"""
